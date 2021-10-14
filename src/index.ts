@@ -11,6 +11,8 @@ export interface Options {
   url: { (data: Data): string };
   outDir: string;
   globals: { [k: string]: unknown };
+  filters: { [k: string]: { (...a: any[]): any; }; };
+  functions: { [k: string]: { (...a: any[]): any; }; };
 }
 
 const isFunctionLike = /^\s*(?:async)?\s*(?:\([a-zA-Z0-9_, ]*\)\s*=>|[a-zA-Z0-9_,]+\s*=>|function\s*\*?\s*[a-zA-Z0-9_,]*\s*\([a-zA-Z0-9_,]*\)\s*{)/;
@@ -38,6 +40,8 @@ export function cli(options: any) {
       throw new Error(`Provided 'url' option does evaluates to a function.`);
     }
   }
+
+
 
   if (globals && fs.existsSync(globals)) {
     opts.globals = yaml.load(fs.readFileSync(globals, 'utf-8')) as Options['globals'];
