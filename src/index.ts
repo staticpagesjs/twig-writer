@@ -24,7 +24,7 @@ function tryParseFunction(value: string): string | { (data: Data): string } {
 	return value;
 }
 
-export function cli(options: unknown) {
+export function cli(options: any) {
 	const { view, url, globals, ...rest } = options;
 	const opts = { ...rest } as Options;
 
