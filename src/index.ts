@@ -3,16 +3,17 @@ import * as path from 'path';
 import { Script } from 'vm';
 import * as yaml from 'js-yaml';
 import { Data } from '@static-pages/core';
-import { TwingEnvironment, TwingLoaderFilesystem } from 'twing';
+import { TwingEnvironment, TwingFilter, TwingFunction, TwingLoaderFilesystem } from 'twing';
+import { TwingCallable } from 'twing/dist/types/lib/callable-wrapper';
 
 export interface Options {
-  view?: string | { (data: Data): string };
-  viewsDir?: string;
-  url?: { (data: Data): string };
-  outDir?: string;
-  globals?: Record<string, unknown>;
-  filters?: Record<string, { (...a: unknown[]): unknown; }>;
-  functions?: Record<string, { (...a: unknown[]): unknown; }>;
+	view?: string | { (data: Data): string };
+	viewsDir?: string;
+	outFile?: { (data: Data): string };
+	outDir?: string;
+	globals?: Record<string, unknown>;
+	filters?: Record<string, { (...a: unknown[]): unknown; }>;
+	functions?: Record<string, { (...a: unknown[]): unknown; }>;
 }
 
 const isFunctionLike = /^\s*(?:async)?\s*(?:\([a-zA-Z0-9_, ]*\)\s*=>|[a-zA-Z0-9_,]+\s*=>|function\s*\*?\s*[a-zA-Z0-9_,]*\s*\([a-zA-Z0-9_,]*\)\s*{)/;
@@ -35,13 +36,13 @@ export function cli(options: any) {
 	if (typeof url === 'string') {
 		const parsedUrl = tryParseFunction(url);
 		if (typeof parsedUrl === 'function') {
-			opts.url = parsedUrl;
+			opts.outFile = parsedUrl;
 		} else {
 			throw new Error('Provided \'url\' option does evaluates to a function.');
 		}
 	}
 
-
+	// TODO: load functions & filters
 
 	if (globals && fs.existsSync(globals)) {
 		opts.globals = yaml.load(fs.readFileSync(globals, 'utf-8')) as Options['globals'];
@@ -56,8 +57,10 @@ export default function twigWriter(options: Partial<Options> = {}) {
 		view = 'index.twig',
 		viewsDir = 'views',
 		outDir = 'build',
-		url = (d: any) => (d.output?.url || d.headers?.url || `unnamed-${unnamedCounter++}`) + '.html',
+		outFile = (d: any) => (d.output?.url || d.headers?.url || `unnamed-${unnamedCounter++}`) + '.html',
 		globals = {},
+		functions = {},
+		filters = {},
 	} = options;
 
 	if (typeof view !== 'string' && typeof view !== 'function')
@@ -66,7 +69,7 @@ export default function twigWriter(options: Partial<Options> = {}) {
 	if (typeof viewsDir !== 'string')
 		throw new Error('Provided \'viewsDir\' option is not a string.');
 
-	if (typeof url !== 'function')
+	if (typeof outFile !== 'function')
 		throw new Error('Provided \'url\' option is not a function.');
 
 	if (typeof outDir !== 'string')
@@ -83,9 +86,19 @@ export default function twigWriter(options: Partial<Options> = {}) {
 		env.addGlobal(k, v);
 	}
 
+	// Functions
+	for (const [k, v] of Object.entries(functions)) {
+		env.addFunction(new TwingFunction(k, v as TwingCallable<any>, []));
+	}
+
+	// Filters
+	for (const [k, v] of Object.entries(filters)) {
+		env.addFilter(new TwingFilter(k, v as TwingCallable<any>, []));
+	}
+
 	return async function (data: Data): Promise<void> {
 		const result = await env.render(typeof view === 'function' ? view(data) : view, data);
-		const outputPath = path.resolve(outDir, url(data));
+		const outputPath = path.resolve(outDir, outFile(data));
 		fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 		fs.writeFileSync(outputPath, result);
 	};
