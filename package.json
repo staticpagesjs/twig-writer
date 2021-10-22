@@ -1,6 +1,6 @@
 {
   "name": "@static-pages/twig-writer",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Twig template engine for Static Pages.",
   "main": "lib/cjs/index.js",
   "module": "lib/esm/index.js",
