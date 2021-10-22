@@ -88,12 +88,14 @@ export default function twigWriter(options: Partial<Options> = {}) {
 
 	// Functions
 	for (const [k, v] of Object.entries(functions)) {
-		env.addFunction(new TwingFunction(k, v as TwingCallable<any>, []));
+		// TODO: add is_raw: html
+		env.addFunction(new TwingFunction(k.replace(/\$$/, ''), v as TwingCallable<any>, []));
 	}
 
 	// Filters
 	for (const [k, v] of Object.entries(filters)) {
-		env.addFilter(new TwingFilter(k, v as TwingCallable<any>, []));
+		// TODO: add is_raw: html
+		env.addFilter(new TwingFilter(k.replace(/\$$/, ''), v as TwingCallable<any>, []));
 	}
 
 	return async function (data: Data): Promise<void> {
