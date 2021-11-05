@@ -37,14 +37,14 @@
     "url": "https://github.com/staticpagesjs/twig-writer/issues"
   },
   "homepage": "https://staticpagesjs.github.io/",
-  "peerDependencies": {
-    "@static-pages/core": "^1.0.0"
-  },
   "dependencies": {
+    "import-from": "^4.0.0",
+    "showdown": "^1.9.1",
     "twing": "^5.1.0"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.3",
+    "@types/showdown": "^1.9.4",
     "@typescript-eslint/eslint-plugin": "^5.1.0",
     "@typescript-eslint/parser": "^5.1.0",
     "eslint": "^8.0.1",
