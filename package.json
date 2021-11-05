@@ -12,7 +12,7 @@
     "build:cjs": "tsc --outDir lib/cjs --module commonjs",
     "watch:esm": "tsc --watch --outDir lib/esm",
     "watch:cjs": "tsc --watch --outDir lib/cjs --module commonjs",
-    "test": "eslint src && jest"
+    "test": "eslint src && npm run build && jest"
   },
   "repository": {
     "type": "git",
