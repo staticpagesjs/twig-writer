@@ -2,7 +2,7 @@
 
 Renders page data via twig templates.
 
-Uses the [Twing](https://www.npmjs.com/package/twing) package under the hood.
+Uses the [Twing](https://www.npmjs.com/package/twing) package under the hood. Everything provided by twing is also exported from this package (for advanced configuration).
 
 This package is part of the StaticPagesJs project, see:
 - Documentation: [staticpagesjs.github.io](https://staticpagesjs.github.io/)
@@ -24,7 +24,7 @@ This package is part of the StaticPagesJs project, see:
 | `markdownFilter` | `boolean` | `true` | Register a custom markdown twig filter; uses [showdown](http://showdownjs.com/). |
 | `showdownOptions` | `showdown.ConverterOptions` | `{ ghCompatibleHeaderId: true, customizedHeaderId: true, tables: true }` | Custom options for the showdown markdown renderer. |
 
-Types exported:
+Types used in options above (also exported by the module):
 ```ts
 type TwigFunction = TwingCallable<unknown> | {
 	fn: TwingCallable<unknown>,
