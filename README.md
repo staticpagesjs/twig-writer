@@ -4,7 +4,7 @@ Renders page data via twig templates.
 
 Uses the [Twing](https://www.npmjs.com/package/twing) package under the hood.
 
-Part of the StaticPagesJs project, see:
+This package is part of the StaticPagesJs project, see:
 - Documentation: [staticpagesjs.github.io](https://staticpagesjs.github.io/)
 - Core: [@static-pages/core](https://www.npmjs.com/package/@static-pages/core)
 - CLI: [@static-pages/cli](https://www.npmjs.com/package/@static-pages/cli)
