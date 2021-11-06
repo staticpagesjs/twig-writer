@@ -45,4 +45,4 @@ The default behaviour is to guess file path by a few possible properties of the 
 - if `data.output.path` is defined, use that.
 - if `data.output.url` is defined, append `.html` and use that.
 - if `data.headers.path` is defined, replace extension to `.html` and use that.
-- if nothing matches name it `unnamed-{n}.html` where `{n}` is a counter.
+- if nothing matches, name it `unnamed-{n}.html` where `{n}` is a counter.
