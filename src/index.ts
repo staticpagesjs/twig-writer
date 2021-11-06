@@ -22,7 +22,7 @@ export type TwigFilter = TwingCallable<unknown> | {
 	options?: TwingFilterOptions,
 };
 
-export interface Options {
+export interface TwigWriterOptions {
 	view?: string | { (data: Data): string };
 	viewsDir?: string;
 	outFile?: { (data: Data): string };
@@ -69,7 +69,7 @@ function tryParseFunction(value: string): string | { (data: Data): string } {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function cli(options: any) {
 	const { view, outFile, globals, functions, filters, advanced, ...rest } = options;
-	const opts = { ...rest } as Options;
+	const opts = { ...rest } as TwigWriterOptions;
 
 	// VIEW prop
 	if (typeof view === 'string') {
@@ -88,14 +88,14 @@ export function cli(options: any) {
 
 	// GLOBALS prop
 	if (globals && fs.existsSync(globals)) {
-		opts.globals = yaml.load(fs.readFileSync(globals, 'utf-8')) as Options['globals'];
+		opts.globals = yaml.load(fs.readFileSync(globals, 'utf-8')) as TwigWriterOptions['globals'];
 	}
 
 	// FUNCTIONS prop
 	if (typeof functions === 'string') {
 		const mod = importModule(functions);
 		if (typeof mod === 'object' && mod) {
-			opts.functions = mod as Options['functions'];
+			opts.functions = mod as TwigWriterOptions['functions'];
 		} else {
 			throw new Error('Provided \'functions\' option does evaluates to an object.');
 		}
@@ -104,7 +104,7 @@ export function cli(options: any) {
 			const importName = typeof functions.import === 'string' ? functions.import : undefined;
 			const mod = importModule(functions.module, importName);
 			if (typeof mod === 'object' && mod) {
-				opts.functions = mod as Options['functions'];
+				opts.functions = mod as TwigWriterOptions['functions'];
 			} else {
 				throw new Error('Provided \'functions.module\' option does evaluates to an object.');
 			}
@@ -119,7 +119,7 @@ export function cli(options: any) {
 	if (typeof filters === 'string') {
 		const mod = importModule(filters);
 		if (typeof mod === 'object' && mod) {
-			opts.filters = mod as Options['filters'];
+			opts.filters = mod as TwigWriterOptions['filters'];
 		} else {
 			throw new Error('Provided \'filters\' option does evaluates to an object.');
 		}
@@ -128,7 +128,7 @@ export function cli(options: any) {
 			const importName = typeof filters.import === 'string' ? filters.import : undefined;
 			const mod = importModule(filters.module, importName);
 			if (typeof mod === 'object' && mod) {
-				opts.filters = mod as Options['filters'];
+				opts.filters = mod as TwigWriterOptions['filters'];
 			} else {
 				throw new Error('Provided \'filters.module\' option does evaluates to an object.');
 			}
@@ -143,7 +143,7 @@ export function cli(options: any) {
 	if (typeof advanced === 'string') {
 		const mod = importModule(advanced);
 		if (typeof mod === 'function') {
-			opts.advanced = mod as Options['advanced'];
+			opts.advanced = mod as TwigWriterOptions['advanced'];
 		} else {
 			throw new Error('Provided \'advanced\' option does evaluates to a function.');
 		}
@@ -152,7 +152,7 @@ export function cli(options: any) {
 			const importName = typeof advanced.import === 'string' ? advanced.import : undefined;
 			const mod = importModule(advanced.module, importName);
 			if (typeof mod === 'function') {
-				opts.advanced = mod as Options['advanced'];
+				opts.advanced = mod as TwigWriterOptions['advanced'];
 			} else {
 				throw new Error('Provided \'advanced.module\' option does evaluates to a function.');
 			}
@@ -166,7 +166,7 @@ export function cli(options: any) {
 	return twigWriter(opts);
 }
 
-export default function twigWriter(options: Options = {}) {
+export default function twigWriter(options: TwigWriterOptions = {}) {
 	let unnamedCounter = 1;
 	const {
 		view = 'index.twig',
