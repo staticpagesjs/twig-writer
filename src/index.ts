@@ -24,7 +24,7 @@ export type TwigFilter = TwingCallable<unknown> | {
 
 export interface TwigWriterOptions {
 	view?: string | { (data: Data): string };
-	viewsDir?: string;
+	viewsDir?: string | string[];
 	outFile?: { (data: Data): string };
 	outDir?: string;
 
@@ -186,8 +186,8 @@ export default async function twigWriter(options: TwigWriterOptions = {}) {
 	if (typeof view !== 'string' && typeof view !== 'function')
 		throw new Error('Provided \'view\' option is not a string or a function.');
 
-	if (typeof viewsDir !== 'string')
-		throw new Error('Provided \'viewsDir\' option is not a string.');
+	if (typeof viewsDir !== 'string' && Array.isArray(viewsDir))
+		throw new Error('Provided \'viewsDir\' option is not a string or string[].');
 
 	if (typeof outFile !== 'function')
 		throw new Error('Provided \'outFile\' option is not a function.');
