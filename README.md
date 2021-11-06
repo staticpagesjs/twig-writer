@@ -46,3 +46,16 @@ The default behaviour is to guess file path by a few possible properties of the 
 - if `data.output.url` is defined, append `.html` and use that.
 - if `data.headers.path` is defined, replace extension to `.html` and use that.
 - if nothing matches, name it `unnamed-{n}.html` where `{n}` is a counter.
+
+## CLI
+This module exports a `cli` function which used to initialize configuration coming from config file or from CLI options where only JSON input is possible.
+Everything defined in the `Options` section is valid whith the following additions:
+
+| Option | Description |
+|--------|-------------|
+| `view` | If view looks like a function we evaluate it in a sandbox to a real JS function. |
+| `outFile` | If outFile looks like a function we evaluate it in a sandbox to a real JS function. |
+| `globals` | Is a path to a YAML file. Loaded as globals. |
+| `functions` | Is a path to a CommonJS module. You can provide an object with `module` and `import` keys to also specify the imported component. |
+| `filters` | Is a path to a CommonJS module. You can provide an object with `module` and `import` keys to also specify the imported component. |
+| `advanced` | Is a path to a CommonJS module. You can provide an object with `module` and `import` keys to also specify the imported component. |
