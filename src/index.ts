@@ -32,8 +32,9 @@ export interface TwigWriterOptions {
 	globals?: Record<string, unknown>;
 	functions?: Record<string, TwigFunction>;
 	filters?: Record<string, TwigFilter>;
-	advanced?: { (env: TwingEnvironment): void };
+	advanced?: { (env: TwingEnvironment): void } | { async (env: TwingEnvironment): Promise<void> };
 	showdownOptions?: showdown.ConverterOptions;
+	markdownFilter?: boolean
 }
 
 const isFunctionLike = /^\s*(?:async)?\s*(?:\([a-zA-Z0-9_, ]*\)\s*=>|[a-zA-Z0-9_,]+\s*=>|function\s*\*?\s*[a-zA-Z0-9_,]*\s*\([a-zA-Z0-9_,]*\)\s*{)/;
@@ -52,7 +53,7 @@ function tryParseFunction(value: string): string | { (data: Data): string } {
  * @param preferredImport Preferred import, if not exists fallbacks to default, then a cjs function export.
  * @returns Module exports.
  */
- const importModule = (file: string, preferredImport = 'cli'): unknown => {
+const importModule = (file: string, preferredImport = 'cli'): unknown => {
 	try {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const mod: any = importFrom(process.cwd(), file);
@@ -166,10 +167,10 @@ export function cli(options: any) {
 	return twigWriter(opts);
 }
 
-export default function twigWriter(options: TwigWriterOptions = {}) {
+export default async function twigWriter(options: TwigWriterOptions = {}) {
 	let unnamedCounter = 1;
 	const {
-		view = 'index.twig',
+		view = 'main.twig',
 		viewsDir = 'views',
 		outDir = 'build',
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -178,6 +179,7 @@ export default function twigWriter(options: TwigWriterOptions = {}) {
 		functions = {},
 		filters = {},
 		advanced = () => undefined,
+		markdownFilter = true,
 		showdownOptions = {},
 	} = options;
 
@@ -204,7 +206,7 @@ export default function twigWriter(options: TwigWriterOptions = {}) {
 
 	if (typeof advanced !== 'function')
 		throw new Error('Provided \'advanced\' option is not a function.');
-		
+
 	if (typeof showdownOptions !== 'object' || !showdownOptions)
 		throw new Error('Provided \'showdownOptions\' option is not an object.');
 
@@ -231,10 +233,10 @@ export default function twigWriter(options: TwigWriterOptions = {}) {
 	}
 
 	// Advanced configuration if nothing helps.
-	advanced(env);
+	await advanced(env);
 
-	// Provide a built-in markdown filter if user does not provided already
-	if (!env.getFilter('markdown')) {
+	// Provide a built-in markdown filter
+	if (markdownFilter) {
 		const converter = new showdown.Converter({
 			ghCompatibleHeaderId: true,
 			customizedHeaderId: true,
