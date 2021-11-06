@@ -39,7 +39,7 @@ type TwigFilter = TwingCallable<unknown> | {
 };
 ```
 
-### outFile defaults
+### `outFile` defaults
 The default behaviour is to guess file path by a few possible properties of the data:
 
 - if `data.output.path` is defined, use that.
