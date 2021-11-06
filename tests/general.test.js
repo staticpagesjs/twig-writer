@@ -21,6 +21,6 @@ test('simple writer test', async () => {
 	const expectedPath = path.resolve('build/unnamed-1.html');
 	const expectedContent = 'hello world!\n<p>foo</p>\n';
 
-	expect(fs.mkdirSync).toHaveBeenCalledTimes(1);
+	expect(fs.writeFileSync).toHaveBeenCalledTimes(1);
 	expect(fs.writeFileSync).toHaveBeenCalledWith(expectedPath, expectedContent);
 });
