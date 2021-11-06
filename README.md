@@ -49,7 +49,7 @@ The default behaviour is to guess file path by a few possible properties of the 
 
 ## CLI
 This module exports a `cli` function which used to initialize configuration coming from config file or from CLI options where only JSON input is possible.
-Everything defined in the `Options` section is valid whith the following additions:
+Everything defined in the `Options` section is valid with the following additions:
 
 | Option | Description |
 |--------|-------------|
