@@ -32,7 +32,7 @@ export interface TwigWriterOptions {
 	globals?: Record<string, unknown>;
 	functions?: Record<string, TwigFunction>;
 	filters?: Record<string, TwigFilter>;
-	advanced?: { (env: TwingEnvironment): void } | { async (env: TwingEnvironment): Promise<void> };
+	advanced?: { (env: TwingEnvironment): void };
 	showdownOptions?: showdown.ConverterOptions;
 	markdownFilter?: boolean
 }
@@ -167,7 +167,7 @@ export function cli(options: any) {
 	return twigWriter(opts);
 }
 
-export default async function twigWriter(options: TwigWriterOptions = {}) {
+export default function twigWriter(options: TwigWriterOptions = {}) {
 	let unnamedCounter = 1;
 	const {
 		view = 'main.twig',
@@ -213,6 +213,17 @@ export default async function twigWriter(options: TwigWriterOptions = {}) {
 	// Create Twig env
 	const env = new TwingEnvironment(new TwingLoaderFilesystem(viewsDir));
 
+	// Provide a built-in markdown filter
+	if (markdownFilter) {
+		const converter = new showdown.Converter({
+			ghCompatibleHeaderId: true,
+			customizedHeaderId: true,
+			tables: true,
+			...showdownOptions
+		});
+		env.addFilter(new TwingFilter('markdown', async md => converter.makeHtml(md), [], { is_safe: ['html'] }));
+	}
+
 	// Globals
 	for (const [k, v] of Object.entries(globals)) {
 		env.addGlobal(k, v);
@@ -233,18 +244,7 @@ export default async function twigWriter(options: TwigWriterOptions = {}) {
 	}
 
 	// Advanced configuration if nothing helps.
-	await advanced(env);
-
-	// Provide a built-in markdown filter
-	if (markdownFilter) {
-		const converter = new showdown.Converter({
-			ghCompatibleHeaderId: true,
-			customizedHeaderId: true,
-			tables: true,
-			...showdownOptions
-		});
-		env.addFilter(new TwingFilter('markdown', async md => converter.makeHtml(md), [], { is_safe: ['html'] }));
-	}
+	advanced(env);
 
 	return async function (data: Data): Promise<void> {
 		const result = await env.render(typeof view === 'function' ? view(data) : view, data);
