@@ -174,7 +174,7 @@ export default function twigWriter(options: TwigWriterOptions = {}) {
 		viewsDir = 'views',
 		outDir = 'build',
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		outFile = (d: any) => d.output?.path || (d.output?.url || d.headers?.path?.replace(new RegExp(path.extname(d.headers.path) + '$'), '') || `unnamed-${unnamedCounter++}`) + '.html',
+		outFile = (d: any) => d.output?.path || (d.output?.url || d.header?.path?.replace(new RegExp(path.extname(d.header.path) + '$'), '') || `unnamed-${unnamedCounter++}`) + '.html',
 		globals = {},
 		functions = {},
 		filters = {},
