@@ -2,18 +2,25 @@
   "name": "@static-pages/twig-writer",
   "version": "0.1.0",
   "description": "Twig template engine for Static Pages.",
-  "main": "lib/cjs/index.js",
-  "module": "lib/esm/index.js",
-  "browser": "lib/esm/index.js",
+  "type": "module",
+  "main": "./cjs/index.js",
+  "module": "./esm/index.js",
+  "browser": "./esm/index.js",
+  "exports": {
+    ".": {
+      "require": "./cjs/index.js",
+      "default": "./esm/index.js"
+    }
+  },
   "scripts": {
     "prepack": "npm run build",
     "build": "npm run build:esm && npm run build:cjs",
-    "build:esm": "tsc --outDir lib/esm",
-    "build:cjs": "tsc --outDir lib/cjs --module commonjs",
-    "watch:esm": "tsc --watch --outDir lib/esm",
-    "watch:cjs": "tsc --watch --outDir lib/cjs --module commonjs",
-    "clean": "rimraf lib",
-    "test": "eslint src && npm run build && jest"
+    "build:esm": "tsc",
+    "build:cjs": "tsc --outDir cjs --module commonjs",
+    "watch:esm": "tsc --watch",
+    "watch:cjs": "tsc --watch --outDir cjs --module commonjs",
+    "test": "eslint src && npm run build && jest",
+    "clean": "rimraf esm cjs/*.?s"
   },
   "repository": {
     "type": "git",
