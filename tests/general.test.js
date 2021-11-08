@@ -3,16 +3,22 @@ jest.spyOn(fs, 'writeFileSync').mockImplementation();
 jest.spyOn(fs, 'mkdirSync').mockImplementation();
 
 const path = require('path');
-const twigWriter = require('../lib/cjs/index').default;
+const twigWriter = require('../cjs/index').default;
+
+process.chdir(__dirname); // cwd should be in tests folder where we provide a proper folder structure.
+// TODO: mock fs to provide a more stable environment for the tests?
 
 afterEach(() => {
 	jest.clearAllMocks();
 });
 
-test('simple writer test', async () => {
-	const writer = await twigWriter({
-		viewsDir: 'tests/views'
-	});
+test('can initialize a writer with default parameters', async () => {
+	const writer = twigWriter();
+	expect(writer).toBeDefined();
+});
+
+test('can render a simple template', async () => {
+	const writer = twigWriter();
 
 	await writer({
 		body: 'foo',
