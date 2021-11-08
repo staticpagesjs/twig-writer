@@ -266,3 +266,22 @@ test('can turn off custom markdown filter', async () => {
 		.rejects
 		.toThrow('Unknown "markdown" filter');
 });
+
+test('can configure showdown filter', async () => {
+	const writer = twigWriter({
+		view: 'showdown.twig',
+		showdownOptions: {
+			headerLevelStart: 2
+		}
+	});
+
+	await writer({
+		body: '# foo',
+	});
+
+	const expectedPath = path.resolve('build/unnamed-1.html');
+	const expectedContent = '<h2 id="foo">foo</h2>';
+
+	expect(fs.writeFileSync).toHaveBeenCalledTimes(1);
+	expect(fs.writeFileSync).toHaveBeenCalledWith(expectedPath, expectedContent);
+});
