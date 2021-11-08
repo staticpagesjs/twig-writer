@@ -66,8 +66,6 @@ const importModule = (file: string, preferredImport = 'cli'): unknown => {
 	}
 };
 
-
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function cli(options: any) {
 	const { view, outFile, globals, functions, filters, advanced, ...rest } = options;
