@@ -37,6 +37,7 @@ export interface TwigWriterOptions {
 	markdownFilter?: boolean
 }
 
+const isAsyncFunction = (fn: { (...args: unknown[]): unknown }): boolean => fn?.constructor?.name === 'AsyncFunction';
 const isFunctionLike = /^\s*(?:async)?\s*(?:\([a-zA-Z0-9_, ]*\)\s*=>|[a-zA-Z0-9_,]+\s*=>|function\s*\*?\s*[a-zA-Z0-9_,]*\s*\([a-zA-Z0-9_,]*\)\s*{)/;
 
 function tryParseFunction(value: string): string | { (data: Data): string } {
@@ -186,7 +187,7 @@ export default function twigWriter(options: TwigWriterOptions = {}) {
 	if (typeof view !== 'string' && typeof view !== 'function')
 		throw new Error('Provided \'view\' option is not a string or a function.');
 
-	if (typeof viewsDir !== 'string' && Array.isArray(viewsDir))
+	if (typeof viewsDir !== 'string' && !(Array.isArray(viewsDir) && viewsDir.every(x => typeof x === 'string')))
 		throw new Error('Provided \'viewsDir\' option is not a string or string[].');
 
 	if (typeof outFile !== 'function')
@@ -233,14 +234,16 @@ export default function twigWriter(options: TwigWriterOptions = {}) {
 	for (const [k, v] of Object.entries(functions)) {
 		const fn = typeof v === 'object' ? v.fn : v;
 		const opts = typeof v === 'object' ? v.options : undefined;
-		env.addFunction(new TwingFunction(k, fn, [], opts));
+		const asyncFn = isAsyncFunction(fn) ? fn : async (...args: unknown[]): Promise<unknown> => fn(...args);
+		env.addFunction(new TwingFunction(k, asyncFn, [], opts));
 	}
 
 	// Filters
 	for (const [k, v] of Object.entries(filters)) {
 		const fn = typeof v === 'object' ? v.fn : v;
 		const opts = typeof v === 'object' ? v.options : undefined;
-		env.addFilter(new TwingFilter(k, fn, [], opts));
+		const asyncFn = isAsyncFunction(fn) ? fn : async (...args: unknown[]): Promise<unknown> => fn(...args);
+		env.addFilter(new TwingFilter(k, asyncFn, [], opts));
 	}
 
 	// Advanced configuration if nothing helps.
