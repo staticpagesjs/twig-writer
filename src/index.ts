@@ -67,8 +67,16 @@ const importModule = (file: string, preferredImport = 'cli'): unknown => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function cli(options: any) {
-	const { view, outFile, globals, functions, filters, advanced, ...rest } = options;
+export function cli(options: any = {}) {
+	const {
+		view,
+		outFile,
+		globals,
+		functions,
+		filters,
+		advanced,
+		...rest
+	} = options;
 	const opts = { ...rest } as TwigWriterOptions;
 
 	// VIEW prop
@@ -111,7 +119,7 @@ export function cli(options: any) {
 		} else {
 			throw new Error('Provided \'functions.module\' option is invalid type, expected string.');
 		}
-	} else {
+	} else if (typeof functions !== 'undefined') {
 		throw new Error('Provided \'functions\' option is invalid type, expected object or string.');
 	}
 
@@ -135,7 +143,7 @@ export function cli(options: any) {
 		} else {
 			throw new Error('Provided \'filters.module\' option is invalid type, expected string.');
 		}
-	} else {
+	} else if (typeof filters !== 'undefined') {
 		throw new Error('Provided \'filters\' option is invalid type, expected object or string.');
 	}
 
@@ -159,7 +167,7 @@ export function cli(options: any) {
 		} else {
 			throw new Error('Provided \'advanced.module\' option is invalid type, expected string.');
 		}
-	} else {
+	} else if (typeof advanced !== 'undefined') {
 		throw new Error('Provided \'advanced\' option is invalid type, expected object or string.');
 	}
 
