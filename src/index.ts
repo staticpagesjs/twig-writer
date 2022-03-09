@@ -12,15 +12,15 @@ export * from 'twing';
 
 type Data = Record<string, unknown>;
 
-export type TwigFunction = TwingCallable<unknown> | {
-	fn: TwingCallable<unknown>,
-	options?: TwingCallableWrapperOptions,
-};
+type TwigFunction = TwingCallable<unknown> | [
+	TwingCallable<unknown>,
+	TwingCallableWrapperOptions,
+];
 
-export type TwigFilter = TwingCallable<unknown> | {
-	fn: TwingCallable<unknown>,
-	options?: TwingFilterOptions,
-};
+type TwigFilter = TwingCallable<unknown> | [
+	TwingCallable<unknown>,
+	TwingFilterOptions,
+];
 
 export interface TwigWriterOptions {
 	view?: string | { (data: Data): string };
@@ -37,9 +37,26 @@ export interface TwigWriterOptions {
 	markdownFilter?: boolean
 }
 
-const isAsyncFunction = (fn: { (...args: unknown[]): unknown }): boolean => fn?.constructor?.name === 'AsyncFunction';
-const isFunctionLike = /^\s*(?:async)?\s*(?:\([a-zA-Z0-9_, ]*\)\s*=>|[a-zA-Z0-9_,]+\s*=>|function\s*\*?\s*[a-zA-Z0-9_,]*\s*\([a-zA-Z0-9_,]*\)\s*{)/;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const isAsyncFunction = (fn: any): fn is { (...args: unknown[]): Promise<unknown> } => fn?.constructor?.name === 'AsyncFunction';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const ensureAsyncFunction = (fn: any) => isAsyncFunction(fn) ? fn : (...args: Parameters<typeof fn>): Promise<ReturnType<typeof fn>> => Promise.resolve(fn(...args));
 
+const addFunction = (
+	env: TwingEnvironment,
+	name: string,
+	fn: TwingCallable<unknown>,
+	opts?: TwingCallableWrapperOptions,
+) => env.addFunction(new TwingFunction(name, ensureAsyncFunction(fn), [], opts));
+
+const addFilter = (
+	env: TwingEnvironment,
+	name: string,
+	fn: TwingCallable<unknown>,
+	opts?: TwingFilterOptions,
+) => env.addFilter(new TwingFilter(name, ensureAsyncFunction(fn), [], opts));
+
+const isFunctionLike = /^\s*(?:async)?\s*(?:\([a-zA-Z0-9_, ]*\)\s*=>|[a-zA-Z0-9_,]+\s*=>|function\s*\*?\s*[a-zA-Z0-9_,]*\s*\([a-zA-Z0-9_,]*\)\s*{)/;
 function tryParseFunction(value: string): string | { (data: Data): string } {
 	if (isFunctionLike.test(value)) {
 		return new Script(value).runInNewContext();
@@ -50,19 +67,17 @@ function tryParseFunction(value: string): string | { (data: Data): string } {
 /**
  * Imports a CommonJS module, relative from the process.cwd().
  *
- * @param file Module path.
- * @param preferredImport Preferred import, if not exists fallbacks to default, then a cjs function export.
+ * @param moduleName Module path.
+ * @param exportName Preferred export, if not exists fallbacks to default, then a cjs function export.
  * @returns Module exports.
  */
-const importModule = (file: string, preferredImport = 'cli'): unknown => {
+const importModule = (moduleName: string, exportName = 'cli'): unknown => {
 	try {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const mod: any = importFrom(process.cwd(), file);
-		if (mod[preferredImport]) return mod[preferredImport];
-		if (mod.default) return mod.default;
-		return mod;
-	} catch (error: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
-		throw new Error(`Failed to load module '${file}': ${error.message || error}\n${error.stack ? 'Trace: ' + error.stack : 'No stack trace available.'}`);
+		const module: any = importFrom(process.cwd(), moduleName);
+		return module[exportName] ?? module.default ?? module;
+	} catch (error: unknown) {
+		throw new Error(`Failed to load module '${moduleName}': ${error instanceof Error ? error.message : error}\n${error instanceof Error ? 'Trace: ' + error.stack : 'No stack trace available.'}`);
 	}
 };
 
@@ -95,24 +110,24 @@ export function cli(options: any = {}) {
 	}
 
 	// GLOBALS prop
-	if (globals && fs.existsSync(globals)) {
+	if (typeof globals === 'string' && fs.existsSync(globals)) {
 		opts.globals = yaml.load(fs.readFileSync(globals, 'utf-8')) as TwigWriterOptions['globals'];
 	}
 
 	// FUNCTIONS prop
 	if (typeof functions === 'string') {
-		const mod = importModule(functions);
-		if (typeof mod === 'object' && mod) {
-			opts.functions = mod as TwigWriterOptions['functions'];
+		const module = importModule(functions);
+		if (typeof module === 'object' && module) {
+			opts.functions = module as TwigWriterOptions['functions'];
 		} else {
 			throw new Error('Provided \'functions\' option does evaluates to an object.');
 		}
 	} else if (typeof functions === 'object' && functions) {
 		if (typeof functions.module === 'string') {
-			const importName = typeof functions.import === 'string' ? functions.import : undefined;
-			const mod = importModule(functions.module, importName);
-			if (typeof mod === 'object' && mod) {
-				opts.functions = mod as TwigWriterOptions['functions'];
+			const exportName = typeof functions.export === 'string' ? functions.export : undefined;
+			const module = importModule(functions.module, exportName);
+			if (typeof module === 'object' && module) {
+				opts.functions = module as TwigWriterOptions['functions'];
 			} else {
 				throw new Error('Provided \'functions.module\' option does evaluates to an object.');
 			}
@@ -125,18 +140,18 @@ export function cli(options: any = {}) {
 
 	// FILTERS prop
 	if (typeof filters === 'string') {
-		const mod = importModule(filters);
-		if (typeof mod === 'object' && mod) {
-			opts.filters = mod as TwigWriterOptions['filters'];
+		const module = importModule(filters);
+		if (typeof module === 'object' && module) {
+			opts.filters = module as TwigWriterOptions['filters'];
 		} else {
 			throw new Error('Provided \'filters\' option does evaluates to an object.');
 		}
 	} else if (typeof filters === 'object' && filters) {
 		if (typeof filters.module === 'string') {
-			const importName = typeof filters.import === 'string' ? filters.import : undefined;
-			const mod = importModule(filters.module, importName);
-			if (typeof mod === 'object' && mod) {
-				opts.filters = mod as TwigWriterOptions['filters'];
+			const exportName = typeof filters.export === 'string' ? filters.export : undefined;
+			const module = importModule(filters.module, exportName);
+			if (typeof module === 'object' && module) {
+				opts.filters = module as TwigWriterOptions['filters'];
 			} else {
 				throw new Error('Provided \'filters.module\' option does evaluates to an object.');
 			}
@@ -149,18 +164,18 @@ export function cli(options: any = {}) {
 
 	// ADVANCED prop
 	if (typeof advanced === 'string') {
-		const mod = importModule(advanced);
-		if (typeof mod === 'function') {
-			opts.advanced = mod as TwigWriterOptions['advanced'];
+		const module = importModule(advanced);
+		if (typeof module === 'function') {
+			opts.advanced = module as TwigWriterOptions['advanced'];
 		} else {
 			throw new Error('Provided \'advanced\' option does evaluates to a function.');
 		}
 	} else if (typeof advanced === 'object' && advanced) {
 		if (typeof advanced.module === 'string') {
-			const importName = typeof advanced.import === 'string' ? advanced.import : undefined;
-			const mod = importModule(advanced.module, importName);
-			if (typeof mod === 'function') {
-				opts.advanced = mod as TwigWriterOptions['advanced'];
+			const exportName = typeof advanced.export === 'string' ? advanced.export : undefined;
+			const module = importModule(advanced.module, exportName);
+			if (typeof module === 'function') {
+				opts.advanced = module as TwigWriterOptions['advanced'];
 			} else {
 				throw new Error('Provided \'advanced.module\' option does evaluates to a function.');
 			}
@@ -238,18 +253,14 @@ export default function twigWriter(options: TwigWriterOptions = {}) {
 
 	// Functions
 	for (const [k, v] of Object.entries(functions)) {
-		const fn = typeof v === 'object' ? v.fn : v;
-		const opts = typeof v === 'object' ? v.options : undefined;
-		const asyncFn = isAsyncFunction(fn) ? fn : async (...args: unknown[]): Promise<unknown> => fn(...args);
-		env.addFunction(new TwingFunction(k, asyncFn, [], opts));
+		const [f, o] = Array.isArray(v) ? v : [v];
+		addFunction(env, k, f, o);
 	}
 
 	// Filters
 	for (const [k, v] of Object.entries(filters)) {
-		const fn = typeof v === 'object' ? v.fn : v;
-		const opts = typeof v === 'object' ? v.options : undefined;
-		const asyncFn = isAsyncFunction(fn) ? fn : async (...args: unknown[]): Promise<unknown> => fn(...args);
-		env.addFilter(new TwingFilter(k, asyncFn, [], opts));
+		const [f, o] = Array.isArray(v) ? v : [v];
+		addFilter(env, k, f, o);
 	}
 
 	// Advanced configuration if nothing helps.

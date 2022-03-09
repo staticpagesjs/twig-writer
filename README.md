@@ -24,19 +24,16 @@ This package is part of the StaticPagesJs project, see:
 | `markdownFilter` | `boolean` | `true` | Register a custom markdown twig filter; uses [showdown](http://showdownjs.com/). |
 | `showdownOptions` | `showdown.ConverterOptions` | `{ ghCompatibleHeaderId: true, customizedHeaderId: true, tables: true }` | Custom options for the showdown markdown renderer. |
 
-Types used in options above (also exported by the module):
+Custom types used in the table above:
 ```ts
-type TwigFunction = TwingCallable<unknown> | {
-	fn: TwingCallable<unknown>,
-	options?: TwingCallableWrapperOptions,
-};
-```
-
-```ts
-type TwigFilter = TwingCallable<unknown> | {
-	fn: TwingCallable<unknown>,
-	options?: TwingFilterOptions,
-};
+type TwigFunction = TwingCallable<unknown> | [
+	TwingCallable<unknown>,
+	TwingCallableWrapperOptions,
+];
+type TwigFilter = TwingCallable<unknown> | [
+	TwingCallable<unknown>,
+	TwingFilterOptions,
+];
 ```
 
 ### `outFile` defaults
@@ -53,9 +50,9 @@ Everything defined in the `Options` section is valid with the following addition
 
 | Option | Description |
 |--------|-------------|
-| `view` | If view looks like a function we evaluate it in a sandbox to a real JS function. |
-| `outFile` | If outFile looks like a function we evaluate it in a sandbox to a real JS function. |
+| `view` | If view looks like a function its evaluated it in a sandbox to a JS function. |
+| `outFile` | If outFile looks like a function its evaluated it in a sandbox to a JS function. |
 | `globals` | Is a path to a YAML file. Loaded as globals. |
-| `functions` | Is a path to a CommonJS module. You can provide an object with `module` and `import` keys to also specify the imported component. |
-| `filters` | Is a path to a CommonJS module. You can provide an object with `module` and `import` keys to also specify the imported component. |
-| `advanced` | Is a path to a CommonJS module. You can provide an object with `module` and `import` keys to also specify the imported component. |
+| `functions` | Is a path to a CommonJS module OR an object with `module` and `export` keys. |
+| `filters` | Is a path to a CommonJS module OR an object with `module` and `export` keys. |
+| `advanced` | Is a path to a CommonJS module OR an object with `module` and `export` keys. |

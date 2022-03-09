@@ -176,10 +176,10 @@ test('can set additional twig functions with options', async () => {
 	const writer = twigWriter({
 		view: 'functions-opts.test.twig',
 		functions: {
-			myfn_safe: {
-				fn: x => x,
-				options: { is_safe: ['html'] }
-			},
+			myfn_safe: [
+				x => x,
+				{ is_safe: ['html'] }
+			],
 			myfn: x => x,
 		}
 	});
@@ -218,10 +218,10 @@ test('can set additional twig filters with options', async () => {
 	const writer = twigWriter({
 		view: 'filters-opts.test.twig',
 		filters: {
-			myfn_safe: {
-				fn: x => x,
-				options: { is_safe: ['html'] }
-			},
+			myfn_safe: [
+				x => x,
+				{ is_safe: ['html'] }
+			],
 			myfn: x => x,
 		}
 	});
