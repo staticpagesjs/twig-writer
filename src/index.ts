@@ -8,8 +8,6 @@ import { TwingFilterOptions } from 'twing/dist/types/lib/filter';
 export * from 'twing';
 export { cli } from './cli.js';
 
-type Data = Record<string, unknown>;
-
 type TwigFunction = TwingCallable<unknown> | [
 	TwingCallable<unknown>,
 	TwingCallableWrapperOptions,
@@ -21,9 +19,9 @@ type TwigFilter = TwingCallable<unknown> | [
 ];
 
 export interface TwigWriterOptions {
-	view?: string | { (data: Data): string };
+	view?: string | { (data: Record<string, unknown>): string };
 	viewsDir?: string | string[];
-	outFile?: { (data: Data): string };
+	outFile?: { (data: Record<string, unknown>): string };
 	outDir?: string;
 
 	// advanced
@@ -121,7 +119,7 @@ export default function twigWriter(options: TwigWriterOptions = {}) {
 	// Advanced configuration if nothing helps.
 	advanced(env);
 
-	return async function (data: Data): Promise<void> {
+	return async function (data: Record<string, unknown>): Promise<void> {
 		const result = await env.render(typeof view === 'function' ? view(data) : view, data);
 		const outputPath = path.resolve(outDir, outFile(data));
 		fs.mkdirSync(path.dirname(outputPath), { recursive: true });
