@@ -30,7 +30,7 @@ export interface TwigWriterOptions {
 	filters?: Record<string, TwigFilter>;
 	advanced?: { (env: TwingEnvironment): void };
 	showdownOptions?: showdown.ConverterOptions;
-	markdownFilter?: boolean
+	markdownFilter?: boolean;
 }
 
 const isAsyncFunction = (fn: { (...args: unknown[]): unknown }): fn is { (...args: unknown[]): Promise<unknown> } => (
