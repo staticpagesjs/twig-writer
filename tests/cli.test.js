@@ -237,7 +237,7 @@ test('cli: can configure with advanced configuration', async () => {
 
 test('cli: can turn off custom markdown filter', async () => {
 	const writer = twigWriter({
-		markdownFilter: false
+		showdownEnabled: false
 	});
 
 	await expect(async () => {
