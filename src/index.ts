@@ -5,17 +5,7 @@ import { TwingFilterOptions } from 'twing/dist/types/lib/filter';
 import { fileWriter, FileWriterOptions } from '@static-pages/file-writer';
 
 export * from 'twing';
-export { cli } from './cli.js';
-
-type TwigFunction = TwingCallable<unknown> | [
-	TwingCallable<unknown>,
-	TwingCallableWrapperOptions,
-];
-
-type TwigFilter = TwingCallable<unknown> | [
-	TwingCallable<unknown>,
-	TwingFilterOptions,
-];
+export * from './cli.js';
 
 export type TwigWriterOptions = {
 	view?: string | { (data: Record<string, unknown>): string };
@@ -23,12 +13,18 @@ export type TwigWriterOptions = {
 
 	// advanced
 	globals?: Record<string, unknown>;
-	functions?: Record<string, TwigFunction>;
-	filters?: Record<string, TwigFilter>;
+	functions?: Record<string, TwingCallable<unknown> | [
+		TwingCallable<unknown>,
+		TwingCallableWrapperOptions,
+	]>;
+	filters?: Record<string, TwingCallable<unknown> | [
+		TwingCallable<unknown>,
+		TwingFilterOptions,
+	]>;
 	advanced?: { (env: TwingEnvironment): void };
 	showdownEnabled?: boolean;
 	showdownOptions?: showdown.ConverterOptions;
-} & Pick<FileWriterOptions, 'outDir' | 'outFile'>;
+} & Omit<FileWriterOptions, 'renderer'>;
 
 const isAsyncFunction = (fn: { (...args: unknown[]): unknown }): fn is { (...args: unknown[]): Promise<unknown> } => (
 	fn?.constructor?.name === 'AsyncFunction'
