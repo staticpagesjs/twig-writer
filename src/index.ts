@@ -49,25 +49,25 @@ export const twigWriter = (options: TwigWriterOptions = {}) => {
 	} = options;
 
 	if (typeof view !== 'string' && typeof view !== 'function')
-		throw new Error('Provided \'view\' option is not a string or a function.');
+		throw new Error('twig-writer \'view\' option expects a string or a function.');
 
 	if (typeof viewsDir !== 'string' && !(Array.isArray(viewsDir) && viewsDir.every(x => typeof x === 'string')))
-		throw new Error('Provided \'viewsDir\' option is not a string or string[].');
+		throw new Error('twig-writer \'viewsDir\' option expects a string or string[].');
 
 	if (typeof globals !== 'object' || !globals)
-		throw new Error('Provided \'globals\' option is not an object.');
+		throw new Error('twig-writer \'globals\' option expects an object.');
 
 	if (typeof functions !== 'object' || !functions)
-		throw new Error('Provided \'functions\' option is not an object.');
+		throw new Error('twig-writer \'functions\' option expects an object.');
 
 	if (typeof filters !== 'object' || !filters)
-		throw new Error('Provided \'filters\' option is not an object.');
+		throw new Error('twig-writer \'filters\' option expects an object.');
 
 	if (typeof advanced !== 'function')
-		throw new Error('Provided \'advanced\' option is not a function.');
+		throw new Error('twig-writer \'advanced\' option expects a function.');
 
 	if (typeof showdownOptions !== 'object' || !showdownOptions)
-		throw new Error('Provided \'showdownOptions\' option is not an object.');
+		throw new Error('twig-writer \'showdownOptions\' option expects an object.');
 
 	// Create Twig env
 	const env = new TwingEnvironment(new TwingLoaderFilesystem(viewsDir));
