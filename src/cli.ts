@@ -30,8 +30,7 @@ const importModule = (moduleName: string, exportName = 'cli'): unknown => {
 	}
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function cli(options: any = {}) {
+export function cli(options: unknown = {}) {
 	const {
 		view,
 		outFile,
@@ -40,7 +39,7 @@ export function cli(options: any = {}) {
 		filters,
 		advanced,
 		...rest
-	} = options;
+	} = options as TwigWriterOptions;
 	const opts = { ...rest } as TwigWriterOptions;
 
 	// VIEW prop
@@ -120,9 +119,9 @@ export function cli(options: any = {}) {
 			throw new Error('Provided \'advanced\' option does evaluates to a function.');
 		}
 	} else if (typeof advanced === 'object' && advanced) {
-		if (typeof advanced.module === 'string') {
-			const exportName = typeof advanced.export === 'string' ? advanced.export : undefined;
-			const module = importModule(advanced.module, exportName);
+		if (typeof advanced['module'] === 'string') {
+			const exportName = typeof advanced['export'] === 'string' ? advanced['export'] : undefined;
+			const module = importModule(advanced['module'], exportName);
 			if (typeof module === 'function') {
 				opts.advanced = module as TwigWriterOptions['advanced'];
 			} else {
