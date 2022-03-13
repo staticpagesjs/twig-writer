@@ -4,7 +4,7 @@ import { TwingCallable, TwingCallableWrapperOptions } from 'twing/dist/types/lib
 import { TwingFilterOptions } from 'twing/dist/types/lib/filter';
 import { fileWriter, FileWriterOptions } from '@static-pages/file-writer';
 
-export * from 'twing';
+export * as twing from 'twing';
 export * from './cli.js';
 
 export type TwigWriterOptions = {
