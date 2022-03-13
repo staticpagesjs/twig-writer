@@ -22,7 +22,7 @@ This package is part of the StaticPagesJs project, see:
 | `filters` | `TwigFilterMap` | `{}` | Filters in an object that gets loaded to the twig environment. |
 | `advanced` | `(env: TwingEnvironment) => void` | `() => undefined` | Allows advanced configuration via access to the `env` twig environment. |
 | `showdownEnabled` | `boolean` | `true` | Register a markdown filter; uses [showdown](http://showdownjs.com/). |
-| `showdownOptions` | `showdown.ConverterOptions` | `{ ghCompatibleHeaderId: true, customizedHeaderId: true, tables: true }` | Custom options for the showdown markdown renderer. |
+| `showdownOptions` | `showdown.ConverterOptions` | `{ simpleLineBreaks: true, ghCompatibleHeaderId: true, customizedHeaderId: true, tables: true }` | Custom options for the showdown markdown renderer. |
 
 Custom types used in the table above:
 ```ts

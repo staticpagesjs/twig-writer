@@ -75,6 +75,7 @@ export const twigWriter = (options: TwigWriterOptions = {}) => {
 	// Provide a built-in markdown filter
 	if (showdownEnabled) {
 		const converter = new showdown.Converter({
+			simpleLineBreaks: true,
 			ghCompatibleHeaderId: true,
 			customizedHeaderId: true,
 			tables: true,
