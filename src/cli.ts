@@ -15,13 +15,13 @@ const tryParseFunction = (value: string): string | { (data: Record<string, unkno
 
 const isObject = (x: unknown): x is Record<string, unknown> => typeof x === 'object' && !!x;
 const isUnknownFunction = (x: unknown): x is { (...args: unknown[]): unknown } => typeof x === 'function';
-const isTwigFilter = (x: unknown): x is Exclude<TwigWriterOptions['filters'], undefined> => (
+const isTwigFiltersObject = (x: unknown): x is Exclude<TwigWriterOptions['filters'], undefined> => (
 	typeof x === 'object' && !!x && Object.values(x).every(v => (
 		(Array.isArray(v) && typeof v[0] === 'function' && typeof v[1] === 'object')
 		|| typeof v === 'function'
 	))
 );
-const isTwigFunction = (x: unknown): x is Exclude<TwigWriterOptions['functions'], undefined> => (
+const isTwigFunctionsObject = (x: unknown): x is Exclude<TwigWriterOptions['functions'], undefined> => (
 	typeof x === 'object' && !!x && Object.values(x).every(v => (
 		(Array.isArray(v) && typeof v[0] === 'function' && typeof v[1] === 'object')
 		|| typeof v === 'function'
@@ -104,7 +104,7 @@ export const twigWriterOptionsFromCliParameters = async (cliParams: Record<strin
 	// FUNCTIONS
 	const importedFunctions = await tryImportModuleCli('functions', functions);
 	if (typeof importedFunctions !== 'undefined') {
-		if (!isTwigFunction(importedFunctions)) {
+		if (!isTwigFunctionsObject(importedFunctions)) {
 			throw new Error('twig-writer failed to load module specified in \'functions\' option: imported value is not a function map.');
 		}
 		options.functions = importedFunctions;
@@ -113,7 +113,7 @@ export const twigWriterOptionsFromCliParameters = async (cliParams: Record<strin
 	// FILTERS
 	const importedFilters = await tryImportModuleCli('filters', filters);
 	if (typeof importedFilters !== 'undefined') {
-		if (!isTwigFilter(importedFilters)) {
+		if (!isTwigFiltersObject(importedFilters)) {
 			throw new Error('twig-writer failed to load module specified in \'filters\' option: imported value is not a function map.');
 		}
 		options.filters = importedFilters;
