@@ -13,12 +13,12 @@ afterEach(() => {
 });
 
 test('cli: can initialize a writer with default parameters', async () => {
-	const writer = twigWriter();
+	const writer = await twigWriter();
 	expect(writer).toBeDefined();
 });
 
 test('cli: can render a simple template', async () => {
-	const writer = twigWriter();
+	const writer = await twigWriter();
 
 	await writer({
 		body: 'foo',
@@ -32,7 +32,7 @@ test('cli: can render a simple template', async () => {
 });
 
 test('cli: can set multiple views dir with initial view', async () => {
-	const writer = twigWriter({
+	const writer = await twigWriter({
 		view: 'userview.twig',
 		viewsDir: [
 			'config/userViews1',
@@ -52,7 +52,7 @@ test('cli: can set multiple views dir with initial view', async () => {
 });
 
 test('cli: can use globals', async () => {
-	const writer = twigWriter({
+	const writer = await twigWriter({
 		view: 'globals.test.twig',
 		globals: 'config/globals/cli.yaml'
 	});
@@ -69,7 +69,7 @@ test('cli: can use globals', async () => {
 });
 
 test('cli: can set output dir', async () => {
-	const writer = twigWriter({
+	const writer = await twigWriter({
 		outDir: 'dist'
 	});
 
@@ -85,7 +85,7 @@ test('cli: can set output dir', async () => {
 });
 
 test('cli: can set outfile name via output.path', async () => {
-	const writer = twigWriter();
+	const writer = await twigWriter();
 
 	await writer({
 		output: {
@@ -102,7 +102,7 @@ test('cli: can set outfile name via output.path', async () => {
 });
 
 test('cli: can set outfile name via output.url', async () => {
-	const writer = twigWriter();
+	const writer = await twigWriter();
 
 	await writer({
 		output: {
@@ -119,7 +119,7 @@ test('cli: can set outfile name via output.url', async () => {
 });
 
 test('cli: can set outfile name via header.path', async () => {
-	const writer = twigWriter();
+	const writer = await twigWriter();
 
 	await writer({
 		header: {
@@ -136,7 +136,7 @@ test('cli: can set outfile name via header.path', async () => {
 });
 
 test('cli: can set outfile name via outFile option', async () => {
-	const writer = twigWriter({
+	const writer = await twigWriter({
 		outFile: '() => "my/output.file"',
 	});
 
@@ -152,7 +152,7 @@ test('cli: can set outfile name via outFile option', async () => {
 });
 
 test('cli: can set additional twig functions', async () => {
-	const writer = twigWriter({
+	const writer = await twigWriter({
 		view: 'functions.test.twig',
 		functions: './config/fn/myfn.js',
 	});
@@ -169,7 +169,7 @@ test('cli: can set additional twig functions', async () => {
 });
 
 test('cli: can set additional twig functions with options', async () => {
-	const writer = twigWriter({
+	const writer = await twigWriter({
 		view: 'functions-opts.test.twig',
 		functions: './config/fn/myfn_safe.js',
 	});
@@ -186,7 +186,7 @@ test('cli: can set additional twig functions with options', async () => {
 });
 
 test('cli: can set additional twig filters', async () => {
-	const writer = twigWriter({
+	const writer = await twigWriter({
 		view: 'filters.test.twig',
 		filters: './config/fn/myfn.js',
 	});
@@ -203,7 +203,7 @@ test('cli: can set additional twig filters', async () => {
 });
 
 test('cli: can set additional twig filters with options', async () => {
-	const writer = twigWriter({
+	const writer = await twigWriter({
 		view: 'filters-opts.test.twig',
 		filters: './config/fn/myfn_safe.js',
 	});
@@ -220,7 +220,7 @@ test('cli: can set additional twig filters with options', async () => {
 });
 
 test('cli: can configure with advanced configuration', async () => {
-	const writer = twigWriter({
+	const writer = await twigWriter({
 		advanced: './config/fn/adv.js',
 	});
 
@@ -236,7 +236,7 @@ test('cli: can configure with advanced configuration', async () => {
 });
 
 test('cli: can turn off custom markdown filter', async () => {
-	const writer = twigWriter({
+	const writer = await twigWriter({
 		showdownEnabled: false
 	});
 
@@ -250,7 +250,7 @@ test('cli: can turn off custom markdown filter', async () => {
 });
 
 test('cli: can configure showdown filter', async () => {
-	const writer = twigWriter({
+	const writer = await twigWriter({
 		view: 'showdown.twig',
 		showdownOptions: {
 			headerLevelStart: 2
