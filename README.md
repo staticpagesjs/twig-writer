@@ -2,7 +2,7 @@
 
 Renders page data via twig templates.
 
-Uses the [Twing](https://www.npmjs.com/package/twing) package under the hood. Everything provided by twing is also exported from this package (for advanced configuration).
+Uses the [Twing](https://www.npmjs.com/package/twing) package under the hood. Everything provided by Twing is also exported from this package (for advanced configuration).
 
 This package is part of the StaticPagesJs project, see:
 - Documentation: [staticpagesjs.github.io](https://staticpagesjs.github.io/)
