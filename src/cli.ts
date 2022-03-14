@@ -1,7 +1,5 @@
-import * as fs from 'fs';
 import * as path from 'path';
 import { Script } from 'vm';
-import * as yaml from 'js-yaml';
 import { fileWriterOptionsFromCliParameters } from '@static-pages/file-writer';
 import { twigWriter, TwigWriterOptions } from './index.js';
 
@@ -87,18 +85,12 @@ export const twigWriterOptionsFromCliParameters = async (cliParams: Record<strin
 	}
 
 	// GLOBALS
-	if (typeof globals === 'string') {
-		if (!fs.existsSync(globals)) {
-			throw new Error(`twig-writer 'globals': '${globals}' file does not exists.`);
+	const importedGlobals = await tryImportModuleCli('globals', globals);
+	if (typeof importedGlobals !== 'undefined') {
+		if (!isObject(importedGlobals)) {
+			throw new Error('twig-writer failed to load module specified in \'globals\' option: imported value is not an object.');
 		}
-		try {
-			options.globals = yaml.load(fs.readFileSync(globals, 'utf-8')) as TwigWriterOptions['globals'];
-		} catch (e) {
-			throw new Error('twig-writer \'globals\' failed to open/parse file.');
-		}
-		if (typeof options.globals !== 'object' && !options.globals) {
-			throw new Error('twig-writer \'globals\' failed to retrieve object map.');
-		}
+		options.globals = importedGlobals;
 	}
 
 	// FUNCTIONS

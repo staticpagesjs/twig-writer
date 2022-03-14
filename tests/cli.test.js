@@ -54,7 +54,7 @@ test('cli: can set multiple views dir with initial view', async () => {
 test('cli: can use globals', async () => {
 	const writer = await twigWriter({
 		view: 'globals.test.twig',
-		globals: 'config/globals/cli.yaml'
+		globals: './config/globals/cli.js'
 	});
 
 	await writer({

@@ -65,7 +65,7 @@ Everything defined in the `Options` section is valid with the following addition
 |--------|-------------|
 | `view` | If view looks like a function its evaluated it in a sandbox to a JS function. |
 | `outFile` | If outFile looks like a function its evaluated it in a sandbox to a JS function. |
-| `globals` | Is a path to a YAML file containing the globals. |
+| `globals` | Is a path to a module OR an object with `module` and `export` keys. `export` is the name of the exported member of `module`, defaults to `'globals'`. |
 | `functions` | Is a path to a module OR an object with `module` and `export` keys. `export` is the name of the exported member of `module`, defaults to `'functions'`. |
 | `filters` | Is a path to a module OR an object with `module` and `export` keys. `export` is the name of the exported member of `module`, defaults to `'filters'`. |
 | `advanced` | Is a path to a module OR an object with `module` and `export` keys. `export` defaults to is the name of the exported member of `module`, `'advanced'`. |
