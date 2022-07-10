@@ -54,7 +54,7 @@
     "twing": "^5.1.1"
   },
   "devDependencies": {
-    "@types/showdown": "^1.9.4",
+    "@types/showdown": "^2.0.0",
     "@typescript-eslint/eslint-plugin": "^5.1.0",
     "@typescript-eslint/parser": "^5.1.0",
     "eslint": "^8.0.1",
