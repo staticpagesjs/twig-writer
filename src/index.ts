@@ -5,7 +5,6 @@ import { TwingFilterOptions } from 'twing/dist/types/lib/filter';
 import { fileWriter, FileWriterOptions } from '@static-pages/file-writer';
 
 export * as twing from 'twing';
-export * from './cli.js';
 
 export type TwigWriterOptions = {
 	view?: string | { (data: Record<string, unknown>): string };
