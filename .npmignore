@@ -1,4 +1,5 @@
 /tsconfig.json
+/tsconfig.cjs.json
 /.eslintrc.cjs
 /tests/
 /src/

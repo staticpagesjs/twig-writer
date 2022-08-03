@@ -1,6 +1,6 @@
-node_modules
-/cjs/*
-!/cjs/package.json
+/node_modules/
 /esm/
+/cjs/
+/tests/dist/
 *.log
 *.tgz

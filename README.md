@@ -23,7 +23,7 @@ This package is part of the StaticPagesJs project, see:
 | `filters` | `TwigFilterMap` | `{}` | Filters in an object that gets loaded to the twig environment. |
 | `advanced` | `(env: TwingEnvironment) => void` | `() => undefined` | Allows advanced configuration via access to the `env` twig environment. |
 | `showdownEnabled` | `boolean` | `true` | Register a markdown filter; uses [showdown](http://showdownjs.com/). |
-| `showdownOptions` | `showdown.ConverterOptions` | `{ simpleLineBreaks: true, ghCompatibleHeaderId: true, customizedHeaderId: true, tables: true }` | Custom options for the showdown markdown renderer. |
+| `showdownOptions` | `showdown.ConverterOptions` | *see showdownOptions section* | Custom options for the showdown markdown renderer. |
 
 Custom types used in the table above:
 ```ts
@@ -56,3 +56,15 @@ The default behaviour is to guess file path by a few possible properties of the 
 - if `data.url` is defined, append `.html` and use that.
 - if `data.header.path` is defined, replace extension to `.html` and use that.
 - if nothing matches call the `onInvalidPath` handler with `undefined` file name.
+
+### `showdownOptions` defaults
+This package uses a sligthly modified defaults compared to the [official Showdown defaults](https://showdownjs.com/docs/available-options/):
+
+```js
+{
+	simpleLineBreaks: true,
+	ghCompatibleHeaderId: true,
+	customizedHeaderId: true,
+	tables: true,
+}
+```

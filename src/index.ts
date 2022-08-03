@@ -34,19 +34,17 @@ const ensureAsyncFunction = (fn: { (...args: unknown[]): unknown }): { (...args:
 		: (...args: unknown[]) => Promise.resolve(fn(...args))
 );
 
-export const twigWriter = (options: TwigWriterOptions = {}) => {
-	const {
-		view = 'main.twig',
-		viewsDir = 'views',
-		globals = {},
-		functions = {},
-		filters = {},
-		advanced = () => undefined,
-		showdownEnabled = true,
-		showdownOptions = {},
-		...rest
-	} = options;
-
+export const twigWriter = ({
+	view = 'main.twig',
+	viewsDir = 'views',
+	globals = {},
+	functions = {},
+	filters = {},
+	advanced = () => undefined,
+	showdownEnabled = true,
+	showdownOptions = {},
+	...rest
+}: TwigWriterOptions = {}) => {
 	if (typeof view !== 'string' && typeof view !== 'function')
 		throw new Error('twig-writer \'view\' option expects a string or a function.');
 
