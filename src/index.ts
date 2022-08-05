@@ -1,4 +1,4 @@
-import showdown from 'showdown';
+import * as showdown from 'showdown';
 import { TwingEnvironment, TwingLoaderFilesystem, TwingFilter, TwingFunction } from 'twing';
 import { TwingCallable, TwingCallableWrapperOptions } from 'twing/dist/types/lib/callable-wrapper';
 import { TwingFilterOptions } from 'twing/dist/types/lib/filter';
