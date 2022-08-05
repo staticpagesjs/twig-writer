@@ -1,4 +1,4 @@
-import showdown from 'showdown';
+import * as showdown from 'showdown';
 import { TwingEnvironment, TwingLoaderFilesystem, TwingFilter, TwingFunction } from 'twing';
 import { TwingCallable, TwingCallableWrapperOptions } from 'twing/dist/types/lib/callable-wrapper';
 import { TwingFilterOptions } from 'twing/dist/types/lib/filter';
@@ -71,7 +71,7 @@ export const twigWriter = ({
 
 	// Provide a built-in markdown filter
 	if (showdownEnabled) {
-		const converter = new showdown.Converter({
+		const converter = new ((showdown as unknown as { default: typeof showdown })?.default ?? showdown).Converter({
 			simpleLineBreaks: true,
 			ghCompatibleHeaderId: true,
 			customizedHeaderId: true,
