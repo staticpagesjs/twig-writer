@@ -13,7 +13,7 @@ This package is part of the StaticPagesJs project, see:
 ```js
 import twigWriter from '@static-pages/twig-writer';
 
-const writer = twigRenderer({
+const writer = twigWriter({
 	outDir: 'dist',
 	outFile: d => d.urlPrefix + d.url,
 	viewsDir: 'myViews',
