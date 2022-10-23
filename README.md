@@ -1,6 +1,6 @@
-# Static Pages / Twig Writer
+# Static Pages / Twig File Writer
 
-Renders page data via twig templates.
+Renders page data via twig templates into files.
 
 Uses the [Twing](https://www.npmjs.com/package/twing) package under the hood. Everything provided by Twing is also exported from this package (for advanced configuration).
 
@@ -22,8 +22,8 @@ This package is part of the StaticPagesJs project, see:
 | `functions` | `TwigFunctionMap` | `{}` | Functions in an object that gets loaded to the twig environment. |
 | `filters` | `TwigFilterMap` | `{}` | Filters in an object that gets loaded to the twig environment. |
 | `advanced` | `(env: TwingEnvironment) => void` | `() => undefined` | Allows advanced configuration via access to the `env` twig environment. |
-| `showdownEnabled` | `boolean` | `true` | Register a markdown filter; uses [showdown](http://showdownjs.com/). |
-| `showdownOptions` | `showdown.ConverterOptions` | *see showdownOptions section* | Custom options for the showdown markdown renderer. |
+| `markedEnabled` | `boolean` | `true` | Register a markdown filter; uses [marked](https://marked.js.org/). |
+| `markedOptions` | `marked.MarkedOptions` | *see markedOptions section* | Custom options for the marked markdown renderer. |
 
 Custom types used in the table above:
 ```ts
@@ -50,21 +50,32 @@ export const myTwigFiltersOrFunctions = {
 };
 ```
 
+> The defined functions above can be an async functions or regular sync functions. No restrictions like the underlying Twing package makes where you allowed to use async functions only.
+
 ### `outFile` defaults
 The default behaviour is to guess file path by a few possible properties of the data:
 
 - if `data.url` is defined, append `.html` and use that.
 - if `data.header.path` is defined, replace extension to `.html` and use that.
-- if nothing matches call the `onInvalidPath` handler with `undefined` file name.
+- if nothing matches call the `onInvalidPath` handler with `undefined` file name. This callback exists only for logging purposes.
 
-### `showdownOptions` defaults
-This package uses a sligthly modified defaults compared to the [official Showdown defaults](https://showdownjs.com/docs/available-options/):
+### `markedOptions` defaults
+This package uses the default options of the [official marked defaults](https://marked.js.org/using_advanced#options):
 
-```js
-{
-	simpleLineBreaks: true,
-	ghCompatibleHeaderId: true,
-	customizedHeaderId: true,
-	tables: true,
-}
+In `twig` files there is a possibility to pass markdown options to the underlying markdown renderer. Example:
+
+```twig
+{{ '[foo](foo)'|markdown({ baseUrl: 'http://example.com' }) }}
+```
+```html
+<p><a href="http://example.com/foo">foo</a></p>
+```
+
+Additionally there is an `inline` option added to the available options. This removes the paragraphs tags. Example:
+
+```twig
+{{ '[foo](foo)'|markdown({ inline: true, baseUrl: 'http://example.com' }) }}
+```
+```html
+<a href="http://example.com/foo">foo</a>
 ```

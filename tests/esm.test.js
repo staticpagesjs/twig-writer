@@ -27,7 +27,7 @@ test('can render a simple template', async () => {
 	});
 
 	const expectedPath = 'dist/unnamed.html';
-	const expectedContent = 'hello world!<p>foo</p>';
+	const expectedContent = 'hello world!<p>foo</p>\n';
 
 	expect(fs.existsSync(expectedPath)).toBe(true);
 	expect(fs.readFileSync(expectedPath, 'utf-8')).toBe(expectedContent);
@@ -48,7 +48,7 @@ test('can set multiple views dir with initial view', async () => {
 	});
 
 	const expectedPath = 'dist/unnamed.html';
-	const expectedContent = '__*<p>foo</p>*__';
+	const expectedContent = '__*<p>foo</p>\n*__';
 
 	expect(fs.existsSync(expectedPath)).toBe(true);
 	expect(fs.readFileSync(expectedPath, 'utf-8')).toBe(expectedContent);
@@ -85,7 +85,7 @@ test('can set output dir', async () => {
 	});
 
 	const expectedPath = 'dist/unnamed.html';
-	const expectedContent = 'hello world!<p>foo</p>';
+	const expectedContent = 'hello world!<p>foo</p>\n';
 
 	expect(fs.existsSync(expectedPath)).toBe(true);
 	expect(fs.readFileSync(expectedPath, 'utf-8')).toBe(expectedContent);
@@ -102,7 +102,7 @@ test('can set outfile name via header.path', async () => {
 	});
 
 	const expectedPath = 'dist/my/output.html';
-	const expectedContent = 'hello world!<p>foo</p>';
+	const expectedContent = 'hello world!<p>foo</p>\n';
 
 	expect(fs.existsSync(expectedPath)).toBe(true);
 	expect(fs.readFileSync(expectedPath, 'utf-8')).toBe(expectedContent);
@@ -118,7 +118,7 @@ test('can set outfile name via outFile option', async () => {
 	});
 
 	const expectedPath = 'dist/my/output.file';
-	const expectedContent = 'hello world!<p>foo</p>';
+	const expectedContent = 'hello world!<p>foo</p>\n';
 
 	expect(fs.existsSync(expectedPath)).toBe(true);
 	expect(fs.readFileSync(expectedPath, 'utf-8')).toBe(expectedContent);
@@ -223,7 +223,7 @@ test('can configure with advanced configuration', async () => {
 	});
 
 	const expectedPath = 'dist/unnamed.html';
-	const expectedContent = 'hello world!<p>foo</p>';
+	const expectedContent = 'hello world!<p>foo</p>\n';
 
 	expect(fs.existsSync(expectedPath)).toBe(true);
 	expect(fs.readFileSync(expectedPath, 'utf-8')).toBe(expectedContent);
@@ -231,7 +231,7 @@ test('can configure with advanced configuration', async () => {
 
 test('can turn off custom markdown filter', async () => {
 	const writer = twigWriter({
-		showdownEnabled: false
+		markedEnabled: false
 	});
 
 	await expect(async () => {
@@ -243,21 +243,38 @@ test('can turn off custom markdown filter', async () => {
 		.toThrow('Unknown "markdown" filter');
 });
 
-test('can configure showdown filter', async () => {
+test('can configure marked filter', async () => {
 	const writer = twigWriter({
-		view: 'showdown.twig',
-		showdownOptions: {
-			headerLevelStart: 2
+		view: 'marked.twig',
+		markedOptions: {
+			baseUrl: 'http://example.com'
 		}
 	});
 
 	await writer({
 		url: 'unnamed',
-		body: '# foo',
+		body: '# foo\n[foo](foo)',
 	});
 
 	const expectedPath = 'dist/unnamed.html';
-	const expectedContent = '<h2 id="foo">foo</h2>';
+	const expectedContent = '<h1 id="foo">foo</h1>\n<p><a href="http://example.com/foo">foo</a></p>\n';
+
+	expect(fs.existsSync(expectedPath)).toBe(true);
+	expect(fs.readFileSync(expectedPath, 'utf-8')).toBe(expectedContent);
+});
+
+test('marked can render inline', async () => {
+	const writer = twigWriter({
+		view: 'marked-inline.twig'
+	});
+
+	await writer({
+		url: 'unnamed',
+		body: '[foo](foo)',
+	});
+
+	const expectedPath = 'dist/unnamed.html';
+	const expectedContent = '<a href="foo">foo</a>';
 
 	expect(fs.existsSync(expectedPath)).toBe(true);
 	expect(fs.readFileSync(expectedPath, 'utf-8')).toBe(expectedContent);

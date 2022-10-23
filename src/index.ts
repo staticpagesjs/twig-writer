@@ -1,10 +1,11 @@
-import * as showdown from 'showdown';
+import { marked } from 'marked';
 import { TwingEnvironment, TwingLoaderFilesystem, TwingFilter, TwingFunction } from 'twing';
 import { TwingCallable, TwingCallableWrapperOptions } from 'twing/dist/types/lib/callable-wrapper';
 import { TwingFilterOptions } from 'twing/dist/types/lib/filter';
 import { fileWriter, FileWriterOptions } from '@static-pages/file-writer';
 
 export * as twing from 'twing';
+export { marked };
 
 export type TwigWriterOptions = {
 	view?: string | { (data: Record<string, unknown>): string };
@@ -21,8 +22,8 @@ export type TwigWriterOptions = {
 		TwingFilterOptions,
 	]>;
 	advanced?: { (env: TwingEnvironment): void };
-	showdownEnabled?: boolean;
-	showdownOptions?: showdown.ConverterOptions;
+	markedEnabled?: boolean;
+	markedOptions?: marked.MarkedOptions;
 } & Omit<FileWriterOptions, 'renderer'>;
 
 const isAsyncFunction = (fn: { (...args: unknown[]): unknown }): fn is { (...args: unknown[]): Promise<unknown> } => (
@@ -41,8 +42,8 @@ export const twigWriter = ({
 	functions = {},
 	filters = {},
 	advanced = () => undefined,
-	showdownEnabled = true,
-	showdownOptions = {},
+	markedEnabled = true,
+	markedOptions = {},
 	...rest
 }: TwigWriterOptions = {}) => {
 	if (typeof view !== 'string' && typeof view !== 'function')
@@ -63,22 +64,25 @@ export const twigWriter = ({
 	if (typeof advanced !== 'function')
 		throw new Error('twig-writer \'advanced\' option expects a function.');
 
-	if (typeof showdownOptions !== 'object' || !showdownOptions)
-		throw new Error('twig-writer \'showdownOptions\' option expects an object.');
+	if (typeof markedOptions !== 'object' || !markedOptions)
+		throw new Error('twig-writer \'markedOptions\' option expects an object.');
 
 	// Create Twig env
 	const env = new TwingEnvironment(new TwingLoaderFilesystem(viewsDir));
 
 	// Provide a built-in markdown filter
-	if (showdownEnabled) {
-		const converter = new ((showdown as unknown as { default: typeof showdown })?.default ?? showdown).Converter({
-			simpleLineBreaks: true,
-			ghCompatibleHeaderId: true,
-			customizedHeaderId: true,
-			tables: true,
-			...showdownOptions,
-		});
-		env.addFilter(new TwingFilter('markdown', async md => converter.makeHtml(md), [], { is_safe: ['html'] }));
+	if (markedEnabled) {
+		env.addFilter(new TwingFilter('markdown',
+			async (md, runtimeOptions) => {
+				if (runtimeOptions) {
+					const runtimeOptionsObj = Object.fromEntries(runtimeOptions.entries());
+					return (runtimeOptionsObj?.inline ? marked.parseInline : marked)(md, { ...markedOptions, ...runtimeOptionsObj});
+				}
+				return marked(md, markedOptions);
+			},
+			[],
+			{ is_safe: ['html'] }
+		));
 	}
 
 	// Globals
