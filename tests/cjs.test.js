@@ -22,8 +22,10 @@ test('can render a simple template', async () => {
 	const writer = twigWriter();
 
 	await writer({
-		url: 'unnamed',
-		body: 'foo',
+		value: {
+			url: 'unnamed',
+			body: 'foo',
+		}
 	});
 
 	const expectedPath = 'dist/unnamed.html';
@@ -43,8 +45,10 @@ test('can set multiple views dir with initial view', async () => {
 	});
 
 	await writer({
-		url: 'unnamed',
-		body: 'foo',
+		value: {
+			url: 'unnamed',
+			body: 'foo',
+		}
 	});
 
 	const expectedPath = 'dist/unnamed.html';
@@ -63,8 +67,10 @@ test('can use globals', async () => {
 	});
 
 	await writer({
-		url: 'unnamed',
-		body: 'foo',
+		value: {
+			url: 'unnamed',
+			body: 'foo',
+		}
 	});
 
 	const expectedPath = 'dist/unnamed.html';
@@ -80,8 +86,10 @@ test('can set output dir', async () => {
 	});
 
 	await writer({
-		url: 'unnamed',
-		body: 'foo',
+		value: {
+			url: 'unnamed',
+			body: 'foo',
+		}
 	});
 
 	const expectedPath = 'dist/unnamed.html';
@@ -95,10 +103,12 @@ test('can set outfile name via header.path', async () => {
 	const writer = twigWriter();
 
 	await writer({
-		header: {
-			path: 'my/output.file'
-		},
-		body: 'foo',
+		value: {
+			header: {
+				path: 'my/output.file'
+			},
+			body: 'foo',
+		}
 	});
 
 	const expectedPath = 'dist/my/output.html';
@@ -114,7 +124,9 @@ test('can set outfile name via outFile option', async () => {
 	});
 
 	await writer({
-		body: 'foo',
+		value: {
+			body: 'foo',
+		}
 	});
 
 	const expectedPath = 'dist/my/output.file';
@@ -133,8 +145,10 @@ test('can set additional twig functions', async () => {
 	});
 
 	await writer({
-		url: 'unnamed',
-		body: 'foo bar',
+		value: {
+			url: 'unnamed',
+			body: 'foo bar',
+		}
 	});
 
 	const expectedPath = 'dist/unnamed.html';
@@ -157,8 +171,10 @@ test('can set additional twig functions with options', async () => {
 	});
 
 	await writer({
-		url: 'unnamed',
-		body: '<foo>',
+		value: {
+			url: 'unnamed',
+			body: '<foo>',
+		}
 	});
 
 	const expectedPath = 'dist/unnamed.html';
@@ -177,8 +193,10 @@ test('can set additional twig filters', async () => {
 	});
 
 	await writer({
-		url: 'unnamed',
-		body: 'foo bar',
+		value: {
+			url: 'unnamed',
+			body: 'foo bar',
+		}
 	});
 
 	const expectedPath = 'dist/unnamed.html';
@@ -201,8 +219,10 @@ test('can set additional twig filters with options', async () => {
 	});
 
 	await writer({
-		url: 'unnamed',
-		body: '<foo>',
+		value: {
+			url: 'unnamed',
+			body: '<foo>',
+		}
 	});
 
 	const expectedPath = 'dist/unnamed.html';
@@ -218,8 +238,10 @@ test('can configure with advanced configuration', async () => {
 	});
 
 	await writer({
-		url: 'unnamed',
-		body: 'foo',
+		value: {
+			url: 'unnamed',
+			body: 'foo',
+		}
 	});
 
 	const expectedPath = 'dist/unnamed.html';
@@ -236,7 +258,9 @@ test('can turn off custom markdown filter', async () => {
 
 	await expect(async () => {
 		await writer({
-			body: 'foo',
+			value: {
+				body: 'foo',
+			}
 		});
 	})
 		.rejects
@@ -252,8 +276,10 @@ test('can configure marked filter', async () => {
 	});
 
 	await writer({
-		url: 'unnamed',
-		body: '# foo\n[foo](foo)',
+		value: {
+			url: 'unnamed',
+			body: '# foo\n[foo](foo)',
+		}
 	});
 
 	const expectedPath = 'dist/unnamed.html';
@@ -269,8 +295,10 @@ test('marked can render inline', async () => {
 	});
 
 	await writer({
-		url: 'unnamed',
-		body: '[foo](foo)',
+		value: {
+			url: 'unnamed',
+			body: '[foo](foo)',
+		}
 	});
 
 	const expectedPath = 'dist/unnamed.html';

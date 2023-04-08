@@ -48,7 +48,7 @@
   },
   "homepage": "https://staticpagesjs.github.io/",
   "dependencies": {
-    "@static-pages/file-writer": "^4.0.0",
+    "@static-pages/file-writer": "^5.0.0",
     "@static-pages/twig-renderer": "^1.0.1"
   },
   "devDependencies": {

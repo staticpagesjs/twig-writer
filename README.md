@@ -22,7 +22,7 @@ const writer = twigWriter({
 
 const pageData = { title: 'Page header', body: 'My Content' };
 
-writer(pageData); // writes the rendered page to the disk as a file.
+writer({ value: pageData }); // writes the rendered page to the disk as a file.
 ```
 
 ## Options
